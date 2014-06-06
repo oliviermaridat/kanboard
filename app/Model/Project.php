@@ -198,6 +198,18 @@ class Project extends Base
     }
 
     /**
+     * Get a project by the name
+     *
+     * @access public
+     * @param  string   $project_name    Project name
+     * @return array
+     */
+    public function getByName($project_name)
+    {
+        return $this->db->table(self::TABLE)->eq('name', $project_name)->findOne();
+    }
+
+    /**
      * Fetch project data by using the token
      *
      * @access public
