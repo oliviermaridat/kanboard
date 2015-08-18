@@ -58,11 +58,14 @@ class Task extends Base
         $values = array(
             'id' => $task['id'],
             'date_started' => $task['date_started'],
+            'date_due' => $task['date_due'],
+            'date_completed' => $task['date_completed'],
             'time_estimated' => $task['time_estimated'] ?: '',
             'time_spent' => $task['time_spent'] ?: '',
         );
 
-        $this->dateParser->format($values, array('date_started'), 'Y-m-d H:i');
+        $this->dateParser->format($values, array('date_started', 'date_completed'), 'Y-m-d H:i');
+        $this->dateParser->format($values, array('date_due'));
 
         $this->response->html($this->taskLayout('task/show', array(
             'project' => $this->project->getById($task['project_id']),
