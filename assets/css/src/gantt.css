@@ -125,8 +125,7 @@ div.ganttview-block {
 }
 
 div.ganttview-block-not-defined {
-    border-color: #000;
-    background-color: #000;
+    border-left: 3px solid #000;
 }
 
 div.ganttview-block-text {

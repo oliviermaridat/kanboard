@@ -37,11 +37,25 @@ class TaskLink extends Base
     const LABEL_ISMILESTONE = 'is a milestone of';
 
     /**
-     * If of the link label "is a milestone of"
+     * Id of the link label "is a milestone of"
      *
      * @var string
      */
     const LABEL_ISMILESTONE_ID = 9;
+
+    /**
+     * Id of the link label "targets milestone"
+     *
+     * @var string
+     */
+    const LABEL_TARGETSMILESTONE_ID = 8;
+
+    /**
+     * Id of the link label "is blocked by"
+     *
+     * @var string
+     */
+    const LABEL_ISBLOCKEDBY_ID = 3;
 
     /**
      * Get a task link
@@ -78,11 +92,12 @@ class TaskLink extends Base
      * 
      * @access public
      * @param  integer   $task_id   Task id
+     * @param  integer   $link_id   Filter on a link id (default: no filter)
      * @return array     All links related to the given task, associated to their task data
      */
-    public function getAll($task_id)
+    public function getAll($task_id, $link_id=-1)
     {
-        return $this->db
+        $query = $this->db
                     ->table(self::TABLE)
                     ->columns(
                         self::TABLE.'.id',
@@ -92,6 +107,8 @@ class TaskLink extends Base
                         Task::TABLE.'.is_active',
                         Task::TABLE.'.project_id',
                         Task::TABLE.'.color_id',
+                        Task::TABLE.'.date_started',
+                        Task::TABLE.'.date_due',
                         Task::TABLE.'.time_spent AS task_time_spent',
                         Task::TABLE.'.time_estimated AS task_time_estimated',
                         Task::TABLE.'.owner_id AS task_assignee_id',
@@ -110,8 +127,35 @@ class TaskLink extends Base
                     ->desc(Board::TABLE.'.position')
                     ->desc(Task::TABLE.'.is_active')
                     ->asc(Task::TABLE.'.position')
-                    ->asc(Task::TABLE.'.id')
-                    ->findAll();
+                    ->asc(Task::TABLE.'.id');
+        if (-1 != $link_id) {
+            $query->eq(self::TABLE.'.link_id', $link_id);
+        }
+        return $query->findAll();
+    }
+
+    /**
+     * Get all links started and due dates attached to the given task
+     *
+     * @access public
+     * @param  integer   $task_id   Task id
+     * @param  integer   $link_id   Filter on a link id (default: no filter)
+     * @return array     Two arrays containing non empty started dates, and non empty due dates
+     */
+    public function getAllDates($task_id, $link_id)
+    {
+        $links = $this->getAll($task_id, $link_id);
+        $dates_started = array();
+        $dates_due = array();
+        foreach($links AS $link) {
+            if (!empty($link['date_started'])) {
+                $dates_started[] = $link['date_started'];
+            }
+            if (!empty($link['date_due'])) {
+                $dates_due[] = $link['date_due'];
+            }
+        }
+        return array($dates_started, $dates_due);
     }
 
     /**

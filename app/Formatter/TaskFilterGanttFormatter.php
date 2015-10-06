@@ -3,6 +3,7 @@
 namespace Kanboard\Formatter;
 
 use Kanboard\Model\TaskFilter;
+use Kanboard\Model\TaskLink;
 
 /**
  * Gantt chart formatter for task filter
@@ -52,6 +53,21 @@ class TaskFilterGanttFormatter extends TaskFilter implements FormatterInterface
 
         $start = $task['date_started'] ?: time();
         $end = $task['date_due'] ?: $start;
+	if (empty($task['date_due']) || empty($task['date_started'])) {
+	    list($dates_started, $dates_due) = $this->taskLink->getAllDates($task['id'], TaskLink::LABEL_TARGETSMILESTONE_ID);
+	    if (empty($task['date_started']) && !empty($dates_started)) {
+	        $start = min($dates_started);
+	    }
+	    if (empty($task['date_due']) && !empty($dates_due)) {
+	        $end = min($dates_due);
+	    }
+	    if (empty($task['date_started'])) {
+	        list($dates_started) = $this->taskLink->getAllDates($task['id'], TaskLink::LABEL_ISBLOCKEDBY_ID);
+	        if (!empty($dates_started)) {
+	            $start = $task['date_started'] ?: max(array_merge($dates_started, array($start)));
+	        }
+	    }
+	}
 
         return array(
             'type' => 'task',
