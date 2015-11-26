@@ -79,7 +79,7 @@ class Tasklink extends Base
                     $this->response->redirect($this->helper->url->to('board', 'show', array('project_id' => $task['project_id'])));
                 }
 
-                $this->response->redirect($this->helper->url->to('task', 'show', array('task_id' => $task['id'], 'project_id' => $task['project_id'])).'#links');
+                $this->response->redirect($this->helper->url->to('task', 'show', array('task_id' => $task['id'], 'project_id' => $task['project_id'])).'#'.(\Model\TaskLink::LABEL_ISMILESTONE_ID == $values['link_id'] ? 'milestone' : 'links'));
             }
 
             $errors = array('title' => array(t('The exact same link already exists')));
@@ -130,7 +130,7 @@ class Tasklink extends Base
         if ($valid) {
             if ($this->taskLink->update($values['id'], $values['task_id'], $values['opposite_task_id'], $values['link_id'])) {
                 $this->flash->success(t('Link updated successfully.'));
-                $this->response->redirect($this->helper->url->to('task', 'show', array('task_id' => $task['id'], 'project_id' => $task['project_id'])).'#links');
+                $this->response->redirect($this->helper->url->to('task', 'show', array('task_id' => $task['id'], 'project_id' => $task['project_id'])).'#'.(\Model\TaskLink::LABEL_ISMILESTONE_ID == $values['link_id'] ? 'milestone' : 'links'));
             }
 
             $this->flash->failure(t('Unable to update your link.'));

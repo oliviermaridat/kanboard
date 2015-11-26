@@ -5,7 +5,7 @@
             <strong><?= t($link['label']) ?></strong>
             [<i><?= $link['project_name'] ?></i>]
             <?= $this->url->link(
-                $this->e('#'.$link['task_id'].' - '.$link['title']),
+                $this->e('#'.$link['task_id'].' '.$link['title']),
                 'task', 'show', array('task_id' => $link['task_id'], 'project_id' => $link['project_id']),
                 false,
                 $link['is_active'] ? '' : 'task-link-closed'

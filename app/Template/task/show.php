@@ -13,12 +13,10 @@
 
 <?= $this->render('task/description', array('task' => $task)) ?>
 
-<?= $this->render('tasklink/show', array(
+<?= $this->render('tasklink/milestone', array(
     'task' => $task,
-    'links' => $links,
-    'link_label_list' => $link_label_list,
-    'editable' => $this->user->hasProjectAccess('tasklink', 'edit', $project['id']),
-    'is_public' => false,
+    'links' => $milestonetasks,
+    'link_label_list' => $link_label_list
 )) ?>
 
 <?= $this->render('subtask/show', array(
@@ -35,6 +33,14 @@
     'task' => $task,
     'files' => $files,
     'images' => $images
+)) ?>
+
+<?= $this->render('tasklink/show', array(
+    'task' => $task,
+    'links' => $links,
+    'link_label_list' => $link_label_list,
+    'editable' => $this->user->hasProjectAccess('tasklink', 'edit', $project['id']),
+    'is_public' => false,
 )) ?>
 
 <?= $this->render('task/comments', array(

@@ -10,9 +10,9 @@
         'is_public' => true,
     )) ?>
 
-    <?= $this->render('tasklink/show', array(
+    <?= $this->render('tasklink/milestone', array(
         'task' => $task,
-        'links' => $links,
+        'links' => $milestonetasks,
         'project' => $project,
         'editable' => false,
         'is_public' => true,
@@ -22,6 +22,13 @@
         'task' => $task,
         'subtasks' => $subtasks,
         'editable' => false
+    )) ?>
+
+    <?= $this->render('tasklink/show', array(
+        'task' => $task,
+        'links' => $links,
+        'project' => $project,
+        'not_editable' => true
     )) ?>
 
     <?= $this->render('task/comments', array(
