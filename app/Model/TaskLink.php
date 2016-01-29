@@ -79,6 +79,7 @@ class TaskLink extends Base
                         Task::TABLE.'.time_spent AS task_time_spent',
                         Task::TABLE.'.time_estimated AS task_time_estimated',
                         Task::TABLE.'.owner_id AS task_assignee_id',
+                        Task::TABLE.'.color_id AS color_id',
                         User::TABLE.'.username AS task_assignee_username',
                         User::TABLE.'.name AS task_assignee_name',
                         Board::TABLE.'.title AS column_title',

@@ -13,7 +13,7 @@
 
 <?= $this->render('task/description', array('task' => $task)) ?>
 
-<?= $this->render('tasklink/show', array(
+<?= $this->hook->render('template:task:before-tasklink', array(
     'task' => $task,
     'links' => $links,
     'link_label_list' => $link_label_list,
@@ -31,6 +31,15 @@
 )) ?>
 
 <?= $this->render('task/time_tracking_summary', array('task' => $task)) ?>
+
+<?= $this->render('tasklink/show', array(
+    'task' => $task,
+    'links' => $links,
+    'link_label_list' => $link_label_list,
+    'editable' => $this->user->hasProjectAccess('tasklink', 'edit', $project['id']),
+    'task_editable' => $this->user->hasProjectAccess('taskmodification', 'edit', $project['id']),
+    'is_public' => false,
+)) ?>
 
 <?= $this->render('file/show', array(
     'task' => $task,

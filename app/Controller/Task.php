@@ -53,6 +53,7 @@ class Task extends Base
     public function show()
     {
         $task = $this->getTask();
+        $links = $this->taskLink->getAllGroupedByLabel($task['id']);
         $subtasks = $this->subtask->getAll($task['id']);
 
         $values = array(
@@ -64,13 +65,13 @@ class Task extends Base
 
         $this->dateParser->format($values, array('date_started'), 'Y-m-d H:i');
 
-        $this->response->html($this->taskLayout('task/show', array(
+        $params = array(
             'project' => $this->project->getById($task['project_id']),
             'files' => $this->file->getAllDocuments($task['id']),
             'images' => $this->file->getAllImages($task['id']),
             'comments' => $this->comment->getAll($task['id'], $this->userSession->getCommentSorting()),
             'subtasks' => $subtasks,
-            'links' => $this->taskLink->getAllGroupedByLabel($task['id']),
+            'links' => $links,
             'task' => $task,
             'values' => $values,
             'link_label_list' => $this->link->getList(0, false),
@@ -83,7 +84,14 @@ class Task extends Base
             'recurrence_trigger_list' => $this->task->getRecurrenceTriggerList(),
             'recurrence_timeframe_list' => $this->task->getRecurrenceTimeframeList(),
             'recurrence_basedate_list' => $this->task->getRecurrenceBasedateList(),
-        )));
+        );
+
+        $params = $this->hook->merge('controller:task:show:params', $params, array(
+            'task' => $task,
+            'links' => $links,
+        ));
+        
+        $this->response->html($this->taskLayout('task/show', $params));
     }
 
     /**
