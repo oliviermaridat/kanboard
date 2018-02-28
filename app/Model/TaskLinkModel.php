@@ -91,11 +91,12 @@ class TaskLinkModel extends Base
      *
      * @access public
      * @param  integer   $task_id   Task id
+     * @param  array     $link_ids  Filter on one or several link ids (default: no filter)
      * @return array
      */
-    public function getAll($task_id)
+    public function getAll($task_id, $link_ids=NULL)
     {
-        return $this->db
+        $query = $this->db
                     ->table(self::TABLE)
                     ->columns(
                         self::TABLE.'.id',
@@ -127,8 +128,11 @@ class TaskLinkModel extends Base
                     ->desc(ColumnModel::TABLE.'.position')
                     ->desc(TaskModel::TABLE.'.is_active')
                     ->asc(TaskModel::TABLE.'.position')
-                    ->asc(TaskModel::TABLE.'.id')
-                    ->findAll();
+                    ->asc(TaskModel::TABLE.'.id');
+        if (NULL != $link_ids && is_array($link_ids) && !empty($link_ids)) {
+            $query->in(self::TABLE.'.link_id', $link_ids);
+        }
+        return $query->findAll();
     }
 
     /**
