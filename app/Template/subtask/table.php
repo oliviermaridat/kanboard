@@ -12,7 +12,13 @@
         </tr>
     </thead>
     <tbody>
+        <?php $total_time_spent = 0; ?>
+        <?php $total_time_estimated = 0; ?>
+        <?php $total_time_spent_cumul = 0; ?>
         <?php foreach ($subtasks as $subtask): ?>
+        <?php $total_time_spent += $subtask['time_spent']; ?>
+        <?php $total_time_estimated += $subtask['time_estimated']; ?>
+        <?php $total_time_spent_cumul += min($subtask['time_spent'], $subtask['time_estimated']); ?>
         <tr data-subtask-id="<?= $subtask['id'] ?>">
             <td>
                 <?php if ($editable): ?>
@@ -25,6 +31,7 @@
                 <?php else: ?>
                     <?= $this->subtask->renderTitle($subtask) ?>
                 <?php endif ?>
+                <?= $this->hook->render('template:subtask:table:after-title', array('subtask' => $subtask)) ?>
             </td>
             <td>
                 <?php if (! empty($subtask['username'])): ?>
@@ -41,5 +48,31 @@
         </tr>
         <?php endforeach ?>
     </tbody>
+    <?php if (! empty($total_time_spent) || ! empty($total_time_estimated)): ?>
+    <tr>
+        <th colspan="2" class="total"><?= t('Total time tracking') ?></th>
+        <td>
+            <?php if (! empty($total_time_spent)): ?>
+                <strong><?= $this->text->e($total_time_spent).'h' ?></strong> <?= t('spent') ?>
+            <?php endif ?>
+
+            <?php if (! empty($total_time_estimated)): ?>
+                <strong><?= $this->text->e($total_time_estimated).'h' ?></strong> <?= t('estimated') ?>
+            <?php endif ?>
+
+            <?php if (! empty($total_time_spent) && ! empty($total_time_estimated)): ?>
+                <strong><?= $this->text->e($total_time_estimated-$total_time_spent).'h' ?></strong> <?= t('remaining') ?>
+            <?php endif ?>
+
+            <div class="progress-bar">
+                <?php $percentage = (!$total_time_estimated ? 0 : round($total_time_spent_cumul/$total_time_estimated*100.0)); ?>
+                <div class="task-board progress color-<?= $task['color_id'] ?>" style="width:<?= min(99, $percentage) ?>%;">
+                    &#160;<?= $percentage ?>%
+                </div>
+            </div>
+        </td>
+    </tr>
+    </tfoot>
+    <?php endif ?>
     </table>
 <?php endif ?>
